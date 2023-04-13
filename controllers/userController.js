@@ -57,7 +57,19 @@ const updateMe = catchAsync(async (req, res, next) => {
     user: user
   });
 });
+//Delete User
+const deleteMe = catchAsync(async (req, res, next) => {
+  const { _id:user } = req.user;
+  // const user = await User.findById(_id);
 
+  await User.findByIdAndDelete(user);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Your account has been deleted'
+  });
+});
+//UpdateUser
 const updateUser = (req, res) => {
   res.status(500).json({
     status: 'error',
@@ -72,4 +84,12 @@ const deleteUser = (req, res) => {
   });
 };
 
-export { getAllUsers, getUser, createUser, updateUser, deleteUser, updateMe };
+export {
+  getAllUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser,
+  updateMe,
+  deleteMe
+};

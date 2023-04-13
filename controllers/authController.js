@@ -33,6 +33,11 @@ const signup = catchAsync(async (req, res, next) => {
     passwordChangedAt,
     role
   } = req.body;
+  if (role === 'admin' || role === 'lead-guide') {
+    return next(
+      new AppError('You are not authorised to be admin or lead-guide', 401)
+    );
+  }
   const newUser = await User.create({
     name,
     email,
@@ -42,7 +47,7 @@ const signup = catchAsync(async (req, res, next) => {
     passwordChangedAt
   });
   createSendToken(newUser, 201, res);
-  const token = signToken(newUser._id);
+  // const token = signToken(newUser._id);
 });
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
