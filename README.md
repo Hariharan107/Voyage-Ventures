@@ -27,51 +27,8 @@ PORT=3000
     Run npm run start to start the server.
     Navigate to http://localhost:3000 in your web browser to view the website.
 
-Project Structure
 
-The project structure is as follows:
-.
-├── controllers
-│   ├── authController.js
-│   ├── bookingController.js
-│   ├── reviewController.js
-│   ├── tourController.js
-│   └── userController.js
-├── models
-│   ├── bookingModel.js
-│   ├── reviewModel.js
-│   ├── tourModel.js
-│   └── userModel.js
-├── routes
-│   ├── authRoutes.js
-│   ├── bookingRoutes.js
-│   ├── reviewRoutes.js
-│   ├── tourRoutes.js
-│   └── userRoutes.js
-├── utils
-│   ├── AppError.js
-│   ├── catchAsync.js
-│   └── sendEmail.js
-├── views
-│   ├── base.pug
-│   ├── error.pug
-│   ├── index.pug
-│   ├── login.pug
-│   ├── overview.pug
-│   ├── resetPassword.pug
-│   ├── signup.pug
-│   ├── tour.pug
-│   ├── tourCard.pug
-│   ├── userAccount.pug
-│   └── userSettings.pug
-├── .env.example
-├── app.js
-├── package-lock.json
-├── package.json
-├── README.md
-├── server.js
-└── start.js
-
+Project Overview 
 
 The project is organized into folders for controllers, models, routes, and views. There is also a folder for utility functions. The app.js file sets up the Express app and middleware. The server.js file starts the server. The start.js file sets up environment variables and starts the server.
 Functionality
