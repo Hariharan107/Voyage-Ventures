@@ -3,7 +3,9 @@ import {
   signup,
   login,
   resetPassword,
-  forgotPassword
+  updatePassword,
+  forgotPassword,
+  protect
 } from '../controllers/authController.js';
 import {
   getAllUsers,
@@ -17,7 +19,8 @@ const router = express.Router();
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgotPassword', forgotPassword);
-router.patch('/resetPassowrd/:token', resetPassword);
+router.patch('/resetPassword/:token', resetPassword);
+router.patch('/updateMyPassword', protect, updatePassword);
 router
   .route('/')
   .get(getAllUsers)

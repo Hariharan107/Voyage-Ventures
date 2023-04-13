@@ -37,7 +37,9 @@ const userSchema = new mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, 'Enter the password again'],
+
     validate: {
+      //It works only on CREATE and SAVE
       validator: function(el) {
         return el === this.password;
       },
@@ -48,6 +50,7 @@ const userSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date
 });
+// Modifying before saving data to the database
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return;
 
@@ -55,10 +58,16 @@ userSchema.pre('save', async function(next) {
   this.passwordConfirm = undefined;
   next();
 });
-userSchema.methods.correctPassword = async (
-  candidatePassword,
-  userPassword
-) => {
+
+userSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+//Instance method
+//candidatePassword is the password entered by a user attempting to log in --plain password
+//userPassword - hashed password stored in the database for that user
+userSchema.methods.correctPassword = async (candidatePassword,userPassword) => {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
@@ -75,6 +84,7 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   // False means NOT changed
   return false;
 };
+//For forgot password and reset password
 userSchema.methods.createPasswordResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');
 
@@ -84,7 +94,7 @@ userSchema.methods.createPasswordResetToken = function() {
     .digest('hex');
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-  console.log({ resetToken }, this.passwordResetToken);
+  // console.log({ resetToken }, this.passwordResetToken);
   return resetToken;
 };
 
