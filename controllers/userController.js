@@ -1,6 +1,6 @@
 import { catchAsync } from '../utils/catchAsync.js';
 import { User } from '../models/userModel.js';
-
+import AppError from '../utils/appError.js';
 // const users = await features.query;
 
 // res.status(200).json({
@@ -32,6 +32,31 @@ const createUser = (req, res) => {
     message: 'This route is not yet defined!'
   });
 };
+//Update user data
+const updateMe = catchAsync(async (req, res, next) => {
+  const { name, email, photo } = req.body;
+  //Make sure that user is not updating password in this route
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        'This route is not for password updates.Please use /updateMyPassword route ',
+        400
+      )
+    );
+  }
+  //Just update the modified fields
+  const user = await User.findById(req.user._id);
+  if (name) user.name = name;
+  if (email) user.email = email;
+  if (photo) user.photo = photo;
+  console.log(user);
+  await user.save({ validateModifiedOnly: true });
+
+  res.status(200).json({
+    status: 'success',
+    user: user
+  });
+});
 
 const updateUser = (req, res) => {
   res.status(500).json({
@@ -47,4 +72,4 @@ const deleteUser = (req, res) => {
   });
 };
 
-export { getAllUsers, getUser, createUser, updateUser, deleteUser };
+export { getAllUsers, getUser, createUser, updateUser, deleteUser, updateMe };
