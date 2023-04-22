@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
+// import { User } from './userModel.js';
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -73,8 +74,39 @@ const tourSchema = new mongoose.Schema(
       default: Date.now(),
       select: false
     },
-    startDates: [Date]
+    startDates: [Date],
+    startLocation: {
+      //GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point']
+      },
+      coordinates: [Number],
+      address: String,
+      description: String
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point']
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number
+      }
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+      }
+    ]
   },
+
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -90,6 +122,13 @@ tourSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+// tourSchema.pre('save', async function(next) {
+//   const guidesPromises = this.guides.map(id => User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   //Promise.all() returns an array of all the promises
+//   next();
+// });
+
 // QUERY MIDDLEWARE
 //Pre
 tourSchema.pre(/^find/, function(next) {
