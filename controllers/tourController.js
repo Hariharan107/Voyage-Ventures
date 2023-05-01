@@ -12,7 +12,7 @@ const aliasTopTours = (req, res, next) => {
 const getAllTours = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()
-    .sort() 
+    .sort()
     .limitFields()
     .paginate();
   const tours = await features.query;
@@ -134,13 +134,12 @@ const getTour = catchAsync(async (req, res, next) => {
 //UPDATE TOUR
 const updateTour = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-``
   const tour = await Tour.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true
-  })
-  if(!tour){
-    next(new AppError('No tour found with that ID',404))
+  });
+  if (!tour) {
+    next(new AppError('No tour found with that ID', 404));
   }
   res.status(200).json({
     status: 'success',
@@ -152,7 +151,7 @@ const updateTour = catchAsync(async (req, res, next) => {
 
 const deleteTour = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-   await Tour.findByIdAndDelete(id);
+  await Tour.findByIdAndDelete(id);
   res.status(204).json({
     status: 'success',
     data: null

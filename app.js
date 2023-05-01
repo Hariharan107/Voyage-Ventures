@@ -37,6 +37,7 @@ app.use(express.json({ limit: '10kb' }));
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
+// {"$gt":""}
 
 // Data sanitization against XSS
 app.use(xss());

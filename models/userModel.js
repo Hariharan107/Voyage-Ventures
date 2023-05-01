@@ -73,10 +73,7 @@ userSchema.pre('save', function(next) {
 //Instance method
 //candidatePassword is the password entered by a user attempting to log in --plain password
 //userPassword - hashed password stored in the database for that user
-userSchema.methods.correctPassword = async (
-  candidatePassword,
-  userPassword
-) => {
+userSchema.methods.correctPassword = async (candidatePassword,userPassword) => {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
