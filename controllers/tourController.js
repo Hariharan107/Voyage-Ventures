@@ -2,6 +2,7 @@ import { Tour } from '../models/tourModel.js';
 import { APIFeatures } from '../utils/apiFeatures.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
+
 const aliasTopTours = (req, res, next) => {
   (req.query.limit = '5'),
     (req.query.sort = '-price,ratingsAverage'),
@@ -120,7 +121,7 @@ const createTour = catchAsync(async (req, res, next) => {
 const getTour = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const tour = await Tour.findById(id);
+  const tour = await Tour.findById(id).populate('reviews');
   if (!tour) {
     return next(new AppError('No tour found with that ID', 404));
   }

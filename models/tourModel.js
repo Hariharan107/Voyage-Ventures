@@ -114,9 +114,19 @@ const tourSchema = new mongoose.Schema(
 );
 //VIRTUAL PROPERTY
 tourSchema.virtual('durationWeeks').get(function() {
+  if (!this.duration || typeof this.duration !== 'number') {
+    return 'N/A';
+  }
   let durationInweeks = this.duration / 7;
-  return `${durationInweeks.toFixed(2)} weeks `;
+  return `${durationInweeks.toFixed(2)} weeks`;
 });
+//virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id'
+});
+
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
