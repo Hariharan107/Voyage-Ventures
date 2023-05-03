@@ -17,13 +17,13 @@ const reviewSchema = new mongoose.Schema(
     },
     tour: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Tour',
+      ref: 'Tour',//this is the name of the model
       required: [true, 'review must belong to a tour']
     },
 
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: 'User',//this is the name of the model
       required: [true, 'review must belong to a user']
     }
   },

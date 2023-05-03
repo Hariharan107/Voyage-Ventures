@@ -10,6 +10,8 @@ const getAllReviews = catchAsync(async (req, res, next) => {
   });
 });
 const createReview = catchAsync(async (req, res, next) => {
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
   const newReview = await Review.create(req.body);
   console.log(req.body);
   console.log({ newReview });
