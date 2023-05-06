@@ -9,12 +9,14 @@ import {
   getTourStats,
   aliasTopTours
 } from '../controllers/tourController.js';
+import ReviewRouter from './reviewRoutes.js';
 import { protect, restrictTo } from '../controllers/authController.js';
-import { createReview } from '../controllers/ReviewController.js';
 const router = express.Router();
 router.route('/get-TourStats').get(getTourStats);
 router.route('/get-monthly-plan/:year').get(getMonthlyPlan);
 router.route('/top-5-best').get(aliasTopTours, getAllTours);
+
+router.use('/:tourId/reviews', ReviewRouter); //nested route. First route will give the params which is ToursId to the second route
 router
   .route('/')
   .get(protect, getAllTours)
@@ -25,8 +27,5 @@ router
   .get(getTour)
   .patch(updateTour)
   .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
-router
-  .route('/:tourId/reviews')
-  .post(protect, restrictTo('user'), createReview);
 
 export default router;
