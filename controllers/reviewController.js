@@ -1,6 +1,8 @@
 import { Review } from '../models/reviewModel.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
+import { createOne, deleteOne, updateOne } from './handleFactory.js';
+import { createTestAccount } from 'nodemailer';
 
 const getAllReviews = catchAsync(async (req, res, next) => {
   let filter = {};
@@ -13,16 +15,18 @@ const getAllReviews = catchAsync(async (req, res, next) => {
     results: reviews
   });
 });
-const createReview = catchAsync(async (req, res, next) => {
-  if (!req.body.tour) req.body.tour = req.params.toursId;
-  console.log(req.params.toursId);
-  req.body.user = req.user.id;
-  const newReview = await Review.create(req.body);
-  console.log(req.body);
-  console.log({ newReview });
-  res.status(200).json({
-    status: 'Success',
-    review: newReview
-  });
-});
-export { getAllReviews, createReview };
+const setTourUserIds = (req, res, next) => {
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+};
+const createReview = createOne(Review);
+const updateReview = updateOne(Review);
+const deleteReview = deleteOne(Review);
+export {
+  getAllReviews,
+  createReview,
+  deleteReview,
+  updateReview,
+  setTourUserIds
+};
