@@ -1,7 +1,7 @@
 import { catchAsync } from '../utils/catchAsync.js';
 import { User } from '../models/userModel.js';
 import AppError from '../utils/appError.js';
-import { deleteOne, updateOne } from './handleFactory.js';
+import { deleteOne, getAll, getOne, updateOne } from './handleFactory.js';
 // const users = await features.query;
 
 // res.status(200).json({
@@ -11,28 +11,10 @@ import { deleteOne, updateOne } from './handleFactory.js';
 //     users
 //   }
 // });
-const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  const length = users.length;
-
-  res.status(201).json({
-    status: 'success',
-    length,
-    users
-  });
-});
-
-const getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!'
-  });
-};
-
 const createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet defined!'
+    message: 'The route is not yet defined.Please use /signup instead '
   });
 };
 //Update user data
@@ -71,9 +53,9 @@ const deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-//Update User DO NOT UPDATE PASSWORD WITH THIS ROUTE 
+const getUser = getOne(User);
+const getAllUsers = getAll(User);
 const updateUser = updateOne(User);
-//Delete User
 const deleteUser = deleteOne(User);
 
 export {

@@ -5,6 +5,7 @@ import {
   createReview,
   deleteReview,
   updateReview,
+  getReview,
   setTourUserIds
 } from '../controllers/reviewController.js';
 const router = express.Router({ mergeParams: true });
@@ -15,5 +16,6 @@ router
 router
   .route('/:id')
   .delete(deleteReview)
+  .get(getReview)
   .patch(updateReview);
 export default router;

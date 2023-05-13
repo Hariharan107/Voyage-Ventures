@@ -1,8 +1,13 @@
 import { Tour } from '../models/tourModel.js';
-import { APIFeatures } from '../utils/apiFeatures.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
-import { createOne, deleteOne, updateOne } from './handleFactory.js';
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne
+} from './handleFactory.js';
 const aliasTopTours = (req, res, next) => {
   (req.query.limit = '5'),
     (req.query.sort = '-price,ratingsAverage'),
@@ -10,22 +15,7 @@ const aliasTopTours = (req, res, next) => {
     next();
 };
 
-const getAllTours = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours
-    }
-  });
-});
+const getAllTours = getAll(Tour);
 
 //AGGREGATION
 const getTourStats = catchAsync(async (req, res, next) => {
@@ -107,25 +97,9 @@ const getMonthlyPlan = catchAsync(async (req, res, next) => {
 });
 
 //GET SPECIFIC TOUR
-const getTour = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-
-  const tour = await Tour.findById(id).populate('reviews');
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour
-    }
-  });
-});
-//CREATE TOUR
+const getTour = getOne(Tour, { path: 'reviews' });
 const createTour = createOne(Tour);
-//UPDATE TOUR
 const updateTour = updateOne(Tour);
-//DELETE TOUR
 const deleteTour = deleteOne(Tour);
 export {
   getAllTours,
