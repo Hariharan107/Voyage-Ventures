@@ -42,6 +42,13 @@ const updateMe = catchAsync(async (req, res, next) => {
     user: user
   });
 });
+//Get current user
+const getMe = (req, res, next) => {
+  res.status(200).json({
+    status: 'success',
+    user: req.user
+  });
+};
 //Delete User
 const deleteMe = catchAsync(async (req, res, next) => {
   const { _id: user } = req.user;
@@ -65,5 +72,6 @@ export {
   updateUser,
   deleteUser,
   updateMe,
-  deleteMe
+  deleteMe,
+  getMe
 };

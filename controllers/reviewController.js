@@ -1,20 +1,22 @@
 import { Review } from '../models/reviewModel.js';
-// import { catchAsync } from '../utils/catchAsync.js';
-// import AppError from '../utils/appError.js';
+import { catchAsync } from '../utils/catchAsync.js';
+import AppError from '../utils/appError.js';
 import {
+  checkIfOwner,
   createOne,
   deleteOne,
   getAll,
   getOne,
   updateOne
 } from './handleFactory.js';
-import { createTestAccount } from 'nodemailer';
 
 const setTourUserIds = (req, res, next) => {
   if (!req.body.tour) req.body.tour = req.params.tourId;
   if (!req.body.user) req.body.user = req.user.id;
   next();
 };
+
+const checkIfAuthor = checkIfOwner(Review);
 const createReview = createOne(Review);
 const getReview = getOne(Review);
 const getAllReviews = getAll(Review);
@@ -26,5 +28,6 @@ export {
   deleteReview,
   updateReview,
   getReview,
-  setTourUserIds
+  setTourUserIds,
+  checkIfAuthor
 };

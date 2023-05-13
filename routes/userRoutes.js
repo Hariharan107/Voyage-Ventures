@@ -5,7 +5,8 @@ import {
   resetPassword,
   updatePassword,
   forgotPassword,
-  protect
+  protect,
+  restrictTo
 } from '../controllers/authController.js';
 
 import {
@@ -14,18 +15,27 @@ import {
   createUser,
   updateUser,
   deleteMe,
+  getMe,
   updateMe,
   deleteUser
 } from '../controllers/userController.js';
 
 const router = express.Router();
+// You are not required to be logged to use these routes
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
-router.patch('/updateMyPassword', protect, updatePassword);
-router.patch('/updateMe', protect, updateMe);
-router.delete('/deleteMe', protect, deleteMe);
+
+// Protect all routes after this middleware
+router.use(protect);
+// TYou are required to be logged to use these routes
+router.patch('/updateMyPassword', updatePassword);
+router.patch('/updateMe', updateMe);
+router.delete('/deleteMe', deleteMe);
+router.get('/me', getMe);
+// Only admin can use these routes
+router.use(restrictTo('admin'));
 router
   .route('/')
   .get(getAllUsers)

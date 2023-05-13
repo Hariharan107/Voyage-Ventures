@@ -6,16 +6,19 @@ import {
   deleteReview,
   updateReview,
   getReview,
-  setTourUserIds
+  setTourUserIds,
+  checkIfAuthor
 } from '../controllers/reviewController.js';
 const router = express.Router({ mergeParams: true });
+
+router.use(protect);
 router
   .route('/')
   .get(getAllReviews)
-  .post(protect, restrictTo('user'), setTourUserIds, createReview);
+  .post(restrictTo('user'), setTourUserIds, createReview);
 router
   .route('/:id')
-  .delete(deleteReview)
   .get(getReview)
-  .patch(updateReview);
+  .delete(restrictTo('admin', 'user'), checkIfAuthor, deleteReview)
+  .patch(restrictTo('admin', 'user'), checkIfAuthor, updateReview);
 export default router;

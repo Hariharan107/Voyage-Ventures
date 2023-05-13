@@ -76,7 +76,7 @@ const getAll = Model =>
   catchAsync(async (req, res, next) => {
     //To allow for nested GET reviews on tour
     let filter = {};
-  if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.params.tourId) filter = { tour: req.params.tourId };
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
@@ -92,4 +92,30 @@ const getAll = Model =>
       }
     });
   });
-export { deleteOne, updateOne, createOne, getOne, getAll };
+const checkIfOwner = Model =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.findById(req.params.id);
+    // console.log({ Review_user: review.user });
+    // Review_user: { _id: new ObjectId("645642be4f33cb4502aaf301"), name: 'Armas' }
+    // console.log({ req_user: req.user });
+    // req_user: {
+    //   _id: new ObjectId("645f31c09dff3dc336f50144"),
+    //   name: 'admin',
+    //   email: 'admin@gmail.com',
+    //   role: 'admin',
+    //   __v: 0
+    // }
+    if (!doc) {
+      return next(new AppError('No review found with that ID', 404));
+    }
+    if (req.user.role !== 'admin' && doc.user.id !== req.user.id) {
+      return next(
+        new AppError(
+          "You are not authorised to change/delete other user's review",
+          401
+        )
+      );
+    }
+    next();
+  });
+export { deleteOne, updateOne, createOne, getOne, getAll,checkIfOwner };
