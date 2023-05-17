@@ -49,7 +49,6 @@ reviewSchema.pre('save', async function(next) {
   }
   next();
 });
-
 reviewSchema.pre(/^find/, function(next) {
   // this.populate({
   //   path: 'tour',
