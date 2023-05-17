@@ -8,7 +8,7 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A Tour must have a name'],
       unique: true,
       trim: true,
-      minlength: [5, 'Tour name should have atleast 10 characters'],
+      minlength: [5, 'Tour name should have atleast 10 characters']
       // maxlength: [40, 'Tour name cant have more have 40 characters']
     },
     slug: String,
@@ -112,6 +112,9 @@ const tourSchema = new mongoose.Schema(
     toObject: { virtuals: true }
   }
 );
+
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
 //VIRTUAL PROPERTY
 tourSchema.virtual('durationWeeks').get(function() {
   if (!this.duration || typeof this.duration !== 'number') {
