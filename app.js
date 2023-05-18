@@ -2,7 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import AppError from './utils/appError.js';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import path, { dirname } from 'path';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
@@ -17,7 +17,13 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
+// PUG ENGINE SETUP
+app.set('view engine', 'pug');
+app.set('views', `${__dirname}/views`);
 // 1)GLOBAL MIDDLEWARES
+// Serving static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Set security HTTP headers
 app.use(helmet());
 // Development logging
@@ -56,8 +62,14 @@ app.use(
     ]
   })
 );
-app.use(express.static(`${__dirname}/public`));
+
 // 3) ROUTES
+app.get('/', (req, res) => {
+  res.status(200).render('base',{
+    tour: 'The Forest Hiker',
+    name: 'Hari'
+  });
+});
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
