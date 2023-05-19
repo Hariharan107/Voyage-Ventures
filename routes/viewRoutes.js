@@ -3,5 +3,5 @@ import { getTour, getOverview } from '../controllers/viewController.js';
 const router = express.Router();
 
 router.route('/').get(getOverview);
-router.route('/tour').get(getTour);
+router.route('/tour/:slug').get(getTour);
 export default router;
