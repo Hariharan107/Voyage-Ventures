@@ -6,7 +6,7 @@ import path, { dirname } from 'path';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
-import viewRouter from './routes/viewRoutes.js'
+import viewRouter from './routes/viewRoutes.js';
 import globalErrorHandler from './controllers/errorController.js';
 import { rateLimit } from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
@@ -25,8 +25,44 @@ app.set('views', `${__dirname}/views`);
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // Set security HTTP headers
-app.use(helmet());
+
+//Use helmet to protect HTTP Header
+app.use(helmet()); // This is what we have for now
+
+//Add the following
+// Further HELMET configuration for Security Policy (CSP)
+// const scriptSrcUrls = [
+//   'https://api.tiles.mapbox.com/',
+//   'https://api.mapbox.com/'
+// ];
+// const styleSrcUrls = [
+//   'https://api.mapbox.com/',
+//   'https://api.tiles.mapbox.com/',
+//   'https://fonts.googleapis.com/'
+// ];
+// const connectSrcUrls = [
+//   'https://api.mapbox.com/',
+//   'https://a.tiles.mapbox.com/',
+//   'https://b.tiles.mapbox.com/',
+//   'https://events.mapbox.com/'
+// ];
+// const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: [],
+//       connectSrc: ["'self'", ...connectSrcUrls],
+//       scriptSrc: ["'self'", ...scriptSrcUrls],
+//       styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+//       workerSrc: ["'self'", 'blob:'],
+//       objectSrc: [],
+//       imgSrc: ["'self'", 'blob:', 'data:'],
+//       fontSrc: ["'self'", ...fontSrcUrls]
+//     }
+//   })
+// );
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
