@@ -13,8 +13,15 @@ const login = async (email, password) => {
       }
     });
     console.log(res);
+    if (res.data.status === 'success') {
+      //   showAlert('success', 'Logged in successfully!');
+      alert('Login was successful');
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1500);
+    }
   } catch (err) {
-    console.log(err.response.data);
+    alert(err.response.data.message);
   }
 };
 document.querySelector('.form').addEventListener('submit', e => {
