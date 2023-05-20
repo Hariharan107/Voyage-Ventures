@@ -6,7 +6,8 @@ import {
   updatePassword,
   forgotPassword,
   protect,
-  restrictTo
+  restrictTo,
+  logout
 } from '../controllers/authController.js';
 
 import {
@@ -24,9 +25,9 @@ const router = express.Router();
 // You are not required to be logged to use these routes
 router.post('/signup', signup);
 router.post('/login', login);
+router.get('/logout', logout);
 router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
-
 // Protect all routes after this middleware
 router.use(protect);
 // TYou are required to be logged to use these routes
