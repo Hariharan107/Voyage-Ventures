@@ -1,13 +1,17 @@
 import express from 'express';
+import AppError from '../utils/appError.js';
 import {
   getTour,
   getOverview,
-  loginForm
+  loginForm,
+  getAccount
 } from '../controllers/viewController.js';
-import { isLoggedIn } from '../controllers/authController.js';
+import { isLoggedIn, protect } from '../controllers/authController.js';
 const router = express.Router();
-router.use(isLoggedIn);
-router.route('/').get(getOverview);
-router.route('/login').get(loginForm);
-router.route('/tour/:slug').get(getTour);
+
+router.route('/').get(isLoggedIn,getOverview);
+router.route('/login').get(isLoggedIn,loginForm);
+router.route('/tour/:slug').get(isLoggedIn,getTour);
+router.route('/me').get(protect, getAccount);
+
 export default router;

@@ -125,6 +125,7 @@ const protect = catchAsync(async (req, res, next) => {
     }
     //Grant access to protected route
     req.user = currentUser;
+    res.locals.user = currentUser;
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
       return next(new AppError('Token has expired. Please log in again.', 401));
