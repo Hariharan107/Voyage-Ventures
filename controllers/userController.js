@@ -4,6 +4,11 @@ import AppError from '../utils/appError.js';
 import multer from 'multer';
 import { deleteOne, getAll, getOne, updateOne } from './handleFactory.js';
 import sharp from 'sharp';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import * as fs from 'fs';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 // const users = await features.query;
 
 // const multerStorage = multer.diskStorage({
@@ -62,6 +67,7 @@ const updateMe = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (name) user.name = name;
   if (email) user.email = email;
+  // if (req.file) await deletePhotoFromServer(req.user.photo);
   if (req.file) user.photo = req.file.filename;
   await user.save({ validateModifiedOnly: true });
 
@@ -94,7 +100,13 @@ const deleteMe = catchAsync(async (req, res, next) => {
     message: 'Your account has been deleted'
   });
 });
-
+const deletePhotoFromServer = async photo => {
+  const path = `${__dirname}/../public/img/users/${photo}`;
+  await fs.promises.unlink(path, err => {
+    if (err) return console.log(err);
+    console.log('Previous photo has been deleted');
+  });
+};
 const getUser = getOne(User);
 const getAllUsers = getAll(User);
 const updateUser = updateOne(User);
