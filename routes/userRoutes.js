@@ -12,6 +12,7 @@ import {
 
 import {
   getAllUsers,
+  uploadUserPhoto,
   getUser,
   createUser,
   updateUser,
@@ -20,7 +21,6 @@ import {
   updateMe,
   deleteUser
 } from '../controllers/userController.js';
-
 const router = express.Router();
 // You are not required to be logged to use these routes
 router.post('/signup', signup);
@@ -32,7 +32,7 @@ router.patch('/resetPassword/:token', resetPassword);
 router.use(protect);
 // TYou are required to be logged to use these routes
 router.patch('/updateMyPassword', updatePassword);
-router.patch('/updateMe', updateMe);
+router.patch('/updateMe', uploadUserPhoto, updateMe);
 router.delete('/deleteMe', deleteMe);
 router.get('/me', getMe);
 // Only admin can use these routes

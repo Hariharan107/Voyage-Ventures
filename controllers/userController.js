@@ -1,16 +1,30 @@
 import { catchAsync } from '../utils/catchAsync.js';
 import { User } from '../models/userModel.js';
 import AppError from '../utils/appError.js';
+import multer from 'multer';
 import { deleteOne, getAll, getOne, updateOne } from './handleFactory.js';
 // const users = await features.query;
 
-// res.status(200).json({
-//   status: 'success',
-//   results: users.length,
-//   data: {
-//     users
-//   }
-// });
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/users');
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user._id}-${req.user.name}.${ext}`);
+  }
+});
+const multerFilter = (req, file, cb) => {
+  //Check if file is an image
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image!Please upload only images', 400), false);
+  }
+};
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+
+const uploadUserPhoto = upload.single('photo');
 const createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
@@ -19,7 +33,10 @@ const createUser = (req, res) => {
 };
 //Update user data
 const updateMe = catchAsync(async (req, res, next) => {
-  const { name, email, photo } = req.body;
+  // console.log(req.body);
+  console.log(req.user);
+  console.log(req.file);
+  const { name, email } = req.body;
   //Make sure that user is not updating password in this route
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -33,7 +50,9 @@ const updateMe = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (name) user.name = name;
   if (email) user.email = email;
-  if (photo) user.photo = photo;
+  if (req.file) user.photo = req.file.filename;
+  // if (photo) user.photo = photo;
+
   console.log(user);
   await user.save({ validateModifiedOnly: true });
 
@@ -73,5 +92,6 @@ export {
   deleteUser,
   updateMe,
   deleteMe,
+  uploadUserPhoto,
   getMe
 };

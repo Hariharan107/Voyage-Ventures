@@ -35,4 +35,4 @@ export const logout = async () => {
     console.log(err.response);
     showAlert('error', 'Error logging out! Try again.');
   }
-};
+}

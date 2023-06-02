@@ -7,6 +7,7 @@ import AppError from '../utils/appError.js';
 import { sendEmail } from '../utils/email.js';
 import crypto from 'crypto';
 dotenv.config();
+
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
@@ -264,7 +265,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
     });
 
     //If token has expired, or there is no user, return error
-    console.log(hashedToken, user);
+    // console.log(hashedToken, user);
     if (!user) {
       return next(new AppError('Token is invalid or has expired', 400));
     }
@@ -275,7 +276,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
-    createSendToken(yser, 200, res);
+    createSendToken(user, 200, res);
   }
 });
 export {

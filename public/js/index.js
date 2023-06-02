@@ -13,7 +13,7 @@ const userPasswordForm = document.querySelector('.form-user-password');
 
 // DELEGATION
 if (mapBox) {
-  const locations = JSON.parse(mapBox.dataset.locations);
+  const locations = JSON.parse(mapBox.dataset.locations)
   displayMap(locations);
 }
 
@@ -32,7 +32,7 @@ if (userDataForm)
     e.preventDefault();
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
-    updateSettings({ name, email }, 'data');
+    updateSettings({ name, email }, 'data')
   });
 
 if (userPasswordForm)
