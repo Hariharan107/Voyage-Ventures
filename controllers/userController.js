@@ -3,17 +3,20 @@ import { User } from '../models/userModel.js';
 import AppError from '../utils/appError.js';
 import multer from 'multer';
 import { deleteOne, getAll, getOne, updateOne } from './handleFactory.js';
+import sharp from 'sharp';
 // const users = await features.query;
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/img/users');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1];
-    cb(null, `user-${req.user._id}-${req.user.name}.${ext}`);
-  }
-});
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'public/img/users');
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split('/')[1];
+//     cb(null, `user-${req.user._id}-${req.user.name}.${ext}`);
+//   }
+// });
+
+const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
   //Check if file is an image
   if (file.mimetype.startsWith('image')) {
@@ -25,17 +28,26 @@ const multerFilter = (req, file, cb) => {
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 const uploadUserPhoto = upload.single('photo');
-const createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'The route is not yet defined.Please use /signup instead '
-  });
+
+const resizeUserPhoto = (req, res, next) => {
+  if (!req.file) return next();
+  req.file.filename = `user-${req.user._id}-${req.user.name}.jpeg`;
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`, err => {
+      if (err) {
+        // Handle the error
+        console.error(err);
+        return next(new AppError('Error processing the image', 500));
+      }
+      next();
+    });
 };
+
 //Update user data
 const updateMe = catchAsync(async (req, res, next) => {
-  // console.log(req.body);
-  console.log(req.user);
-  console.log(req.file);
   const { name, email } = req.body;
   //Make sure that user is not updating password in this route
   if (req.body.password || req.body.passwordConfirm) {
@@ -51,9 +63,6 @@ const updateMe = catchAsync(async (req, res, next) => {
   if (name) user.name = name;
   if (email) user.email = email;
   if (req.file) user.photo = req.file.filename;
-  // if (photo) user.photo = photo;
-
-  console.log(user);
   await user.save({ validateModifiedOnly: true });
 
   res.status(200).json({
@@ -61,6 +70,13 @@ const updateMe = catchAsync(async (req, res, next) => {
     user: user
   });
 });
+// Create user is not defined
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'The route is not yet defined.Please use /signup instead '
+  });
+};
 //Get current user
 const getMe = (req, res, next) => {
   res.status(200).json({
@@ -92,6 +108,7 @@ export {
   deleteUser,
   updateMe,
   deleteMe,
+  resizeUserPhoto,
   uploadUserPhoto,
   getMe
 };

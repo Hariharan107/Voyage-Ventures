@@ -19,6 +19,7 @@ import {
   deleteMe,
   getMe,
   updateMe,
+  resizeUserPhoto,
   deleteUser
 } from '../controllers/userController.js';
 const router = express.Router();
@@ -32,7 +33,7 @@ router.patch('/resetPassword/:token', resetPassword);
 router.use(protect);
 // TYou are required to be logged to use these routes
 router.patch('/updateMyPassword', updatePassword);
-router.patch('/updateMe', uploadUserPhoto, updateMe);
+router.patch('/updateMe', uploadUserPhoto, resizeUserPhoto, updateMe);
 router.delete('/deleteMe', deleteMe);
 router.get('/me', getMe);
 // Only admin can use these routes
