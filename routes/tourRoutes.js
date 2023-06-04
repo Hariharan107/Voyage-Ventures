@@ -9,6 +9,8 @@ import {
   getTourStats,
   aliasTopTours,
   getDistances,
+  uploadTourImages,
+  resizeTourImages,
   getToursWithin
 } from '../controllers/tourController.js';
 import ReviewRouter from './reviewRoutes.js';
@@ -27,7 +29,7 @@ router.use('/:tourId/reviews', ReviewRouter); //nested route. First route will g
 router
   .route('/tours-within/:distance/center/:latlng/unit/:unit')
   .get(getToursWithin);
-router.route('/distance/:latlng/unit/:unit').get(getDistances)
+router.route('/distance/:latlng/unit/:unit').get(getDistances);
 
 //Tour routes
 router
@@ -38,7 +40,13 @@ router
 router
   .route('/:id')
   .get(getTour)
-  .patch(protect, restrictTo('admin', 'lead-guide'), updateTour)
+  .patch(
+    protect,
+    restrictTo('admin', 'lead-guide'),
+    uploadTourImages,
+    resizeTourImages,
+    updateTour
+  )
   .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
 
 export default router;
