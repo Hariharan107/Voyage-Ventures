@@ -169,7 +169,6 @@ const getMonthlyPlan = catchAsync(async (req, res, next) => {
 //Image uploads
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
-  //Check if file is an image
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
@@ -180,22 +179,36 @@ const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 const uploadTourImages = upload.fields([
   { name: 'imageCover', maxCount: 1 },
-  { name: 'images', maxCount: 13 }
+  { name: 'images', maxCount: 3 }
 ]);
-const resizeTourImages = catchAsync(async (req, res, next) => {
-  if (!req.files.imageCover || !req.files.images) return next();
-  console.log(req.files);
-  //1) Cover Image
-  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
-  const resizedCoverImage = await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 });
-  await resizedCoverImage.toFile(`public/img/tours/${req.body.imageCover}`);
-  next();
-});
 // upload.single('image')
 // upload.array('imageCover')
+const resizeTourImages = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) return next();
+
+  req.body.imageCover = `tour-${req.params.id}-cover.jpeg`; /// remove Date.now()
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const filename = `tour-${req.params.id}-${i + 1}.jpeg`; //remove Date.now()
+
+      sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${filename}`);
+      req.body.images.push(filename);
+    })
+  );
+  next();
+});
+
 //GET SPECIFIC TOUR
 const getAllTours = getAll(Tour);
 const getTour = getOne(Tour, { path: 'reviews' });
