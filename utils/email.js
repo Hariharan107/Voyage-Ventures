@@ -3,7 +3,7 @@ import { catchAsync } from './catchAsync.js';
 import pug from 'pug';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { htmlToText } from 'html-to-text';
+import htmlToText from 'html-to-text';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -16,7 +16,13 @@ class Email {
   }
 
   createTransport() {
-    return nodemailer.createTransport({
+    return createTransport({
+      service: 'SendinBlue',
+
+      auth: {
+        user: process.env.SENDIN_BLUE_LOGIN_NAME,
+        pass: process.env.SENDIN_BLUE_API_KEY
+      }
       // Configure the email transport options (SMTP, SendGrid, etc.)
     });
   }
