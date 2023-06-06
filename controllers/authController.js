@@ -4,7 +4,7 @@ import { catchAsync } from '../utils/catchAsync.js';
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import AppError from '../utils/appError.js';
-import { sendEmail } from '../utils/email.js';
+import { Email } from '../utils/email.js';
 import crypto from 'crypto';
 dotenv.config();
 
@@ -63,6 +63,8 @@ const signup = catchAsync(async (req, res, next) => {
     passwordConfirm,
     passwordChangedAt
   });
+  const url = `${req.protocol}://${req.get('host')}/me`; //host gives domain name
+  await new Email(newUser, url).sendWelcome();
   createSendToken(newUser, 201, res);
   // const token = signToken(newUser._id);
 });
@@ -223,19 +225,16 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 
   await user.save({ validateModifiedOnly: true });
 
-  // 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
-
+  
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+  // 3) Send it to user's email
 
   try {
-    await sendEmail({
-      email: email || user.email,
-      subject: 'Your password reset token (valid for 10 min)',
-      message
-    });
+    const resetURL = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+  
+    await new Email(user, resetURL).sendPasswordReset();
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email!'
