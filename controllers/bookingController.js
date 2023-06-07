@@ -1,7 +1,7 @@
 import Stripe from 'stripe'; // Change import to use named import
 import { catchAsync } from '../utils/catchAsync.js';
 import { Tour } from '../models/tourModel.js';
-
+import { Booking } from '../models/bookingModels.js';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Create an instance of Stripe
 
 const getCheckoutSession = catchAsync(async (req, res, next) => {
@@ -9,7 +9,9 @@ const getCheckoutSession = catchAsync(async (req, res, next) => {
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/`,
+    success_url: `${req.protocol}://${req.get('host')}/?tour=${
+      req.params.tourID
+    }&user=${req.user.id}&price=${tour.price}`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourID,
@@ -33,5 +35,13 @@ const getCheckoutSession = catchAsync(async (req, res, next) => {
     session
   });
 });
-
-export { getCheckoutSession };
+const createBookingCheckout = catchAsync(async (req, res, next) => {
+  const { tour, user, price } = req.query;
+  if (!tour || !user || !price) {
+    return next();
+  }
+  await Booking.create({ tour, user, price });
+  next();
+  res.redirect(req.originalUrl.split('?')[0]);
+});
+export { getCheckoutSession, createBookingCheckout };

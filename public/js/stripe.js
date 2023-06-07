@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
-import Stripe from 'stripe';
+// import Stripe from 'stripe';
 
 const stripe = Stripe(
   'pk_test_51NFwotSIH8fieRDzRkcDSuUbZTeeCxLIqZWZj6Ip09OND3bfRMlU8VkLdByiAIb8r0TKrN1eFtj0H82CS7osf6gV004ZTnI2R6'

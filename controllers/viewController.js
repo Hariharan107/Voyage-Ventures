@@ -32,10 +32,14 @@ const loginForm = catchAsync(async (req, res, next) => {
     title: 'Login to your account'
   });
 });
-
+const getSingupForm = (req, res) => {
+  res.status(200).render('signup', {
+    title: 'create your account!'
+  });
+};
 const getAccount = (req, res) => {
   res.status(200).render('account', {
     title: 'Your account'
   });
-}
-export { getOverview, getTour, loginForm,getAccount };
+};
+export { getOverview, getTour, loginForm, getAccount, getSingupForm };
