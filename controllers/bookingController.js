@@ -1,5 +1,4 @@
 import Stripe from 'stripe'; // Change import to use named import
-import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { Tour } from '../models/tourModel.js';
 
