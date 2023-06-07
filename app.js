@@ -15,6 +15,7 @@ import hpp from 'hpp';
 import cookieParser from 'cookie-parser';
 import xss from 'xss-clean';
 import helmet from 'helmet';
+import compression from 'compression';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -70,7 +71,7 @@ app.use(
     ]
   })
 );
-
+app.use(compression());
 // 3) ROUTES
 // app.use((req, res, next) => {
 //   req.requestTime = new Date().toISOString();
