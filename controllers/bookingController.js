@@ -1,4 +1,12 @@
 import Stripe from 'stripe'; // Change import to use named import
+import {
+  deleteOne,
+  updateOne,
+  createOne,
+  getOne,
+  getAll,
+  checkIfOwner
+} from './handleFactory.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { Tour } from '../models/tourModel.js';
 import { Booking } from '../models/bookingModels.js';
@@ -44,4 +52,17 @@ const createBookingCheckout = catchAsync(async (req, res, next) => {
   next();
   res.redirect(req.originalUrl.split('?')[0]);
 });
-export { getCheckoutSession, createBookingCheckout };
+const createBooking = createOne(Booking);
+const getBooking = getOne(Booking);
+const getAllBookings = getAll(Booking);
+const updateBooking = updateOne(Booking);
+const deleteBooking = deleteOne(Booking);
+export {
+  getCheckoutSession,
+  createBookingCheckout,
+  getAllBookings,
+  updateBooking,
+  deleteBooking,
+  createBooking,
+  getBooking
+};
