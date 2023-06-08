@@ -10,7 +10,7 @@ const bookTour = async tourId => {
   try {
     // 1) Get checkout session from API
     const session = await axios(
-      `/api/v1/bookings/checkout-session/${tourId}`
+      `https://natours-z7ja.onrender.com/api/v1/bookings/checkout-session/${tourId}`
     );
     console.log(session);
     // await stripe.redirectToCheckout({
